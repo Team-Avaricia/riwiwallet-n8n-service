@@ -2,10 +2,6 @@
 
 > Servicio de automatizaciones para RiwiWallet - Procesamiento inteligente de correos bancarios, alertas financieras proactivas y workflows de IA.
 
-[![n8n](https://img.shields.io/badge/n8n-Automation-FF6D5A?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com/)
-[![Team Avaricia](https://img.shields.io/badge/Team-Avaricia-gold?style=for-the-badge)](https://github.com/Team-Avaricia)
-
 ---
 
 ## 📋 Descripción
