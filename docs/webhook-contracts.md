@@ -503,5 +503,4 @@ La versión actual de la API es **v1**. Cambios breaking se comunicarán con al 
 
 ---
 
-*Última actualización: Diciembre 2024*
 
