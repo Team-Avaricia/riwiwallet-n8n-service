@@ -193,5 +193,3 @@ El servicio n8n actúa como el **motor de automatizaciones** de RiwiWallet, proc
 4. Reconfigurar credenciales
 5. Validar webhooks
 
-**RTO**: 1 hora | **RPO**: 6 horas
-
