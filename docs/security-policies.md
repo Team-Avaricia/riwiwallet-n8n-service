@@ -283,6 +283,3 @@ Antes de cada deploy a producción:
 
 ---
 
-*Última actualización: Diciembre 2024*
-*Próxima revisión: Marzo 2025*
-
