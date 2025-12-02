@@ -236,11 +236,4 @@ Este proyecto es privado y pertenece a **Team Avaricia** - RiwiWallet.
 
 ---
 
-<div align="center">
-
-**Desarrollado con ❤️ por Team Avaricia**
-
-*RiwiWallet - Tu asistente financiero inteligente*
-
-</div>
 
