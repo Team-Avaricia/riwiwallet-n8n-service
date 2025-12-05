@@ -1,0 +1,148 @@
+version: '3.8'
+
+services:
+
+  # ============================================
+  # PostgreSQL - Base de datos principal
+  # ============================================
+  db:
+    image: postgres:16-alpine
+    container_name: riwi_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - riwi_data:/var/lib/postgresql/data
+      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    deploy:
+      resources:
+        limits:
+          memory: 1500m
+          cpus: '0.75'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - riwi_network
+
+  # ============================================
+  # Wiki.js - Documentación
+  # ============================================
+  wiki:
+    image: ghcr.io/requarks/wiki:2
+    container_name: riwi_wiki
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${WIKI_DB_USER}
+      DB_PASS: ${WIKI_DB_PASSWORD}
+      DB_NAME: ${WIKI_DB_NAME}
+    volumes:
+      - riwi_wiki_assets:/wiki/assets
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: '0.5'
+    networks:
+      - riwi_network
+
+  # ============================================
+  # n8n - Motor de automatizaciones RiwiWallet
+  # ============================================
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: riwi_n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      # Autenticación
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD}
+      # Host
+      - N8N_HOST=${N8N_HOST:-localhost}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=${N8N_PROTOCOL:-http}
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678}
+      # Timezone
+      - GENERIC_TIMEZONE=America/Bogota
+      - TZ=America/Bogota
+      # Base de datos (usa el PostgreSQL existente)
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${N8N_DB_NAME:-n8n}
+      - DB_POSTGRESDB_USER=${DB_USER}
+      - DB_POSTGRESDB_PASSWORD=${DB_PASSWORD}
+      # Seguridad
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      # Cola de trabajos con Redis
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      # Optimización de memoria
+      - NODE_OPTIONS=--max-old-space-size=512
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+          cpus: '0.5'
+    networks:
+      - riwi_network
+
+  # ============================================
+  # Redis - Cola de trabajos para n8n
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: riwi_redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 100mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - riwi_network
+
+volumes:
+  riwi_data:
+  riwi_wiki_assets:
+  n8n_data:
+  redis_data:
+
+networks:
+  riwi_network:
+    driver: bridge
+
