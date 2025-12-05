@@ -20,7 +20,7 @@ services:
       - TZ=${TIMEZONE:-America/Bogota}
       # Encryption key para credenciales
       - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
-      # Base de datos (PostgreSQL recomendado para producción)
+      # Base de datos (PostgreSQL)
       - DB_TYPE=${DB_TYPE:-postgresdb}
       - DB_POSTGRESDB_HOST=${DB_POSTGRESDB_HOST:-postgres}
       - DB_POSTGRESDB_PORT=${DB_POSTGRESDB_PORT:-5432}
