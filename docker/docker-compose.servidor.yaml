@@ -1,4 +1,6 @@
-version: '3.8'
+# Docker Compose para RiwiWallet - Servidor de Producción
+# Última actualización: 6 de Diciembre 2025
+# IP del servidor: 157.90.251.124
 
 services:
 
@@ -79,6 +81,7 @@ services:
       - N8N_HOST=${N8N_HOST:-localhost}
       - N8N_PORT=5678
       - N8N_PROTOCOL=${N8N_PROTOCOL:-http}
+      - N8N_SECURE_COOKIE=false
       - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678}
       # Timezone
       - GENERIC_TIMEZONE=America/Bogota

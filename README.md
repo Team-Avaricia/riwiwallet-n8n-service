@@ -208,11 +208,24 @@ Abre tu navegador en: `http://localhost:5678`
 
 ---
 
+## 🖥️ Servidor de Producción
+
+| Servicio | URL | Estado |
+|----------|-----|--------|
+| n8n | http://157.90.251.124:5678 | ✅ Activo |
+| Wiki.js | http://157.90.251.124:3000 | ✅ Activo |
+| PostgreSQL | 157.90.251.124:5432 | ✅ Activo |
+
+> **Última actualización:** 6 de Diciembre 2025
+
+---
+
 ## 📚 Documentación Adicional
 
 - [Arquitectura del Sistema](docs/architecture.md)
 - [Políticas de Seguridad](docs/security-policies.md)
 - [Contratos de Webhook](docs/webhook-contracts.md)
+- [Guía de Instalación](docs/setup-guide.md)
 
 ---
 
