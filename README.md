@@ -161,7 +161,6 @@ Para cargar un workflow en n8n:
 |----------|-----|--------|
 | n8n | https://n8n.avaricia.crudzaso.com | ✅ Activo |
 | Wiki.js | https://docs.avaricia.crudzaso.com | ✅ Activo |
-| PostgreSQL | 157.90.251.124:5432 | ✅ Activo |
 
 > **Última actualización:** 12 de Diciembre 2025
 
