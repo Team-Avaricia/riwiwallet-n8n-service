@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuración
-N8N_HOST="${N8N_HOST:-http://localhost:5678}"
+N8N_HOST="${N8N_HOST:-https://n8n.avaricia.crudzaso.com}"
 N8N_API_KEY="${N8N_API_KEY:-}"
 IMPORT_DIR="${1:-../workflows}"
 

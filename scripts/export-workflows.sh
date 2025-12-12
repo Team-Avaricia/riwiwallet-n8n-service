@@ -13,7 +13,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuración
-N8N_HOST="${N8N_HOST:-http://localhost:5678}"
+N8N_HOST="${N8N_HOST:-https://n8n.avaricia.crudzaso.com}"
 N8N_API_KEY="${N8N_API_KEY:-}"
 EXPORT_DIR="../workflows"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
@@ -25,19 +25,24 @@ echo -e "${GREEN}  RiwiWallet - Team Avaricia${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
-# Verificar que n8n está corriendo
+# Verificar API Key
+if [ -z "$N8N_API_KEY" ]; then
+    echo -e "${RED}Error: N8N_API_KEY no está configurado${NC}"
+    echo "Configura la variable de entorno: export N8N_API_KEY=tu_api_key"
+    exit 1
+fi
+
+# Verificar conexión
 echo -e "${YELLOW}Verificando conexión con n8n...${NC}"
 if ! curl -s "${N8N_HOST}/healthz" > /dev/null 2>&1; then
     echo -e "${RED}Error: No se puede conectar a n8n en ${N8N_HOST}${NC}"
-    echo "Asegúrate de que n8n esté corriendo."
     exit 1
 fi
 echo -e "${GREEN}✓ Conexión exitosa${NC}"
 echo ""
 
-# Crear directorio de backup
+# Crear directorio temporal
 mkdir -p "${BACKUP_DIR}"
-echo -e "${YELLOW}Directorio de backup: ${BACKUP_DIR}${NC}"
 
 # Función para exportar workflows
 export_workflows() {
@@ -70,54 +75,33 @@ export_workflows() {
     done
 }
 
-# Función para exportar credenciales (sin secretos)
-export_credentials_schema() {
-    echo -e "${YELLOW}Exportando esquema de credenciales...${NC}"
-    
-    curl -s -X GET "${N8N_HOST}/api/v1/credentials" \
-        -H "X-N8N-API-KEY: ${N8N_API_KEY}" \
-        -H "Content-Type: application/json" \
-        | jq '[.data[] | {id, name, type, nodesAccess}]' > "${BACKUP_DIR}/credentials_schema.json"
-    
-    echo -e "${GREEN}✓ credentials_schema.json (sin secretos)${NC}"
-}
-
 # Ejecutar exportación
 export_workflows
-export_credentials_schema
 
-# Copiar a directorio de workflows por categoría
+# Copiar a directorio de workflows
 echo ""
-echo -e "${YELLOW}Organizando workflows por categoría...${NC}"
+echo -e "${YELLOW}Organizando workflows...${NC}"
 
 for json_file in "${BACKUP_DIR}"/*.json; do
     if [ -f "$json_file" ]; then
         filename=$(basename "$json_file")
         
-        # Determinar categoría basándose en el nombre
-        if [[ "$filename" == *"email"* ]] || [[ "$filename" == *"parsing"* ]]; then
+        # Por defecto, mover a email-parsing si coincide, o dejar en raíz de workflows
+        if [[ "$filename" == *"email"* ]] || [[ "$filename" == *"parsing"* ]] || [[ "$filename" == *"bancolombia"* ]] || [[ "$filename" == *"nequi"* ]]; then
             cp "$json_file" "${EXPORT_DIR}/email-parsing/"
-        elif [[ "$filename" == *"sync"* ]] || [[ "$filename" == *"user"* ]]; then
-            cp "$json_file" "${EXPORT_DIR}/user-sync/"
-        elif [[ "$filename" == *"alert"* ]] || [[ "$filename" == *"notification"* ]]; then
-            cp "$json_file" "${EXPORT_DIR}/notifications/"
-        elif [[ "$filename" == *"analytics"* ]] || [[ "$filename" == *"projection"* ]] || [[ "$filename" == *"finance"* ]]; then
-            cp "$json_file" "${EXPORT_DIR}/finance-analytics/"
+        else
+            cp "$json_file" "${EXPORT_DIR}/"
         fi
     fi
 done
+
+# Limpiar backup temporal
+rm -rf "../backups"
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}  Exportación completada${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
-echo -e "Backup guardado en: ${BACKUP_DIR}"
-echo -e "Workflows organizados en: ${EXPORT_DIR}"
-echo ""
-echo -e "${YELLOW}Próximos pasos:${NC}"
-echo "1. Revisar los archivos exportados"
-echo "2. git add workflows/"
-echo "3. git commit -m 'chore: update workflows export'"
-echo "4. git push"
+echo -e "Workflows actualizados en: ${EXPORT_DIR}"
 
