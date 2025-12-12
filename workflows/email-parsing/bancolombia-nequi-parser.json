@@ -1,0 +1,202 @@
+{
+  "name": "Parse Email - Bancolombia/Nequi",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "66914a1b-7065-4dc1-8488-1344c8d30285",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ndzqWsCv311gbJhV",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9d7b0acf-b1b3-4866-b511-93e774cc1318",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "bancolombia",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "30a6b6de-9d2b-4d34-b19a-d13f77a20e01",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "nequi",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "4a880567-d739-4d48-8ea4-355427a24234",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parser de correos bancarios para RiwiWallet\n// Extrae: banco, tipo, monto, descripción y email del usuario\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const email = item.json;\n  const snippet = email.snippet || '';\n  const subject = email.Subject || '';\n  const from = email.From || '';\n  const to = email.To || '';\n  const body = snippet.toLowerCase();\n  \n  // ==========================================\n  // 1. DETECTAR BANCO\n  // ==========================================\n  let banco = 'Otro';\n  if (from.toLowerCase().includes('bancolombia')) {\n    banco = 'Bancolombia';\n  } else if (from.toLowerCase().includes('nequi')) {\n    banco = 'Nequi';\n  } else if (from.toLowerCase().includes('davivienda')) {\n    banco = 'Davivienda';\n  }\n  \n  // ==========================================\n  // 2. DETECTAR TIPO (Income o Expense)\n  // ==========================================\n  let type = 'Expense'; // Por defecto es gasto\n  \n  if (body.includes('recibiste') || \n      body.includes('te enviaron') || \n      body.includes('transferencia recibida') ||\n      body.includes('te transfirieron') ||\n      body.includes('abono')) {\n    type = 'Income';\n  }\n  \n  // ==========================================\n  // 3. EXTRAER MONTO (formato colombiano $150.000)\n  // ==========================================\n  const montoMatch = snippet.match(/\\$\\s?([\\d.]+(?:,\\d{2})?)/);\n  let amount = 0;\n  if (montoMatch) {\n    // Eliminar puntos de miles, reemplazar coma decimal\n    amount = parseFloat(montoMatch[1].replace(/\\./g, '').replace(',', '.'));\n  }\n  \n  // ==========================================\n  // 4. EXTRAER DESCRIPCIÓN/COMERCIO\n  // ==========================================\n  let description = 'Transacción bancaria';\n  \n  // Bancolombia: \"en NOMBRE_COMERCIO\"\n  const comercioMatch1 = snippet.match(/en\\s+([A-Z][A-Z0-9\\s]+?)(?:\\s+aprobada|\\s+exitosa|\\s+por|\\.|$)/i);\n  \n  // Nequi: \"a NOMBRE\" o \"de NOMBRE\"\n  const comercioMatch2 = snippet.match(/(?:pagaste|recibiste|enviaste).*?(?:a|de)\\s+([A-Z][A-Za-z\\s]+)/i);\n  \n  if (comercioMatch1) {\n    description = comercioMatch1[1].trim();\n  } else if (comercioMatch2) {\n    description = comercioMatch2[1].trim();\n  } else {\n    // Si no encuentra comercio, usar parte del asunto\n    description = subject.substring(0, 50);\n  }\n  \n  // ==========================================\n  // 5. EXTRAER EMAIL DEL USUARIO (para buscar userId)\n  // ==========================================\n  // El email \"To\" es el email del usuario de RiwiWallet\n  let userEmail = to;\n  // Limpiar el formato \"Nombre <email@gmail.com>\" → \"email@gmail.com\"\n  const emailMatch = to.match(/<([^>]+)>/);\n  if (emailMatch) {\n    userEmail = emailMatch[1];\n  }\n  \n  // ==========================================\n  // 6. CREAR OBJETO DE SALIDA\n  // ==========================================\n  results.push({\n    json: {\n      userEmail: userEmail,\n      amount: amount,\n      type: type,         // \"Income\" o \"Expense\" (Texto)\n      category: banco,\n      description: description,\n      source: \"Automatic\", // CORREGIDO: \"Automatic\" (Texto)\n      // Datos extra para debug\n      _debug: {\n        asunto: subject,\n        de: from,\n        snippet: snippet.substring(0, 100)\n      }\n    }\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "ef0c0d51-cd81-4288-aef3-bcbf53fb42e8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.avaricia.crudzaso.com/api/User/email/{{ $json.userEmail }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "f12363fb-ed53-4e05-98cb-95c4311f9656",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.avaricia.crudzaso.com/api/Transaction",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "userId",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "name": "amount",
+              "value": "={{ $('Code in JavaScript').item.json.amount }}"
+            },
+            {
+              "name": "type",
+              "value": "={{ $('Code in JavaScript').item.json.type }}"
+            },
+            {
+              "name": "category",
+              "value": "={{ $('Code in JavaScript').item.json.category }}"
+            },
+            {
+              "name": "description",
+              "value": "={{ $('Code in JavaScript').item.json.description }}"
+            },
+            {
+              "name": "source",
+              "value": "Automatic"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "7c596ebc-07f4-43f2-8758-a2060001b7a4",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4e493dda-275a-4df4-b09f-44fd9bf411eb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5a5eea8cadf9c2a4b5a13a0b2479b9679d3cc309d8593112e9bf43922d349938"
+  },
+  "id": "B8rurjM15i0kASyK",
+  "tags": []
+}
