@@ -16,30 +16,6 @@ Este repositorio contiene las **automatizaciones críticas** de RiwiWallet, incl
 
 ---
 
-## 🏗️ Arquitectura
-
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Frontend  │────▶│   Backend   │────▶│    n8n      │
-│  (Next.js)  │     │  (NestJS)   │     │  (Service)  │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           │                    │
-                           │                    ▼
-                           │            ┌─────────────┐
-                           │            │   OpenAI    │
-                           │            │   (LLM)     │
-                           │            └─────────────┘
-                           ▼
-                    ┌─────────────┐
-                    │  PostgreSQL │
-                    │   (DB)      │
-                    └─────────────┘
-```
-
-> ⚠️ **Importante**: Solo el backend puede comunicarse con n8n. Nunca el frontend ni los usuarios directamente.
-
----
-
 ## 🐳 Contenedores en Producción
 
 El servicio de n8n ya se encuentra desplegado y activo. Los contenedores principales son:
@@ -48,9 +24,6 @@ El servicio de n8n ya se encuentra desplegado y activo. Los contenedores princip
 |------------|--------|-------------|
 | `riwi_n8n` | `n8nio/n8n:latest` | Motor de workflows principal |
 | `riwi_redis` | `redis:7-alpine` | Cola de mensajes y caché para n8n |
-| `db` | `postgres:16-alpine` | Base de datos principal (compartida) |
-| `netapi_gestor_finanzas` | `dotnet APT.dll` | Backend API de RiwiWallet |
-| `riwiwallet_chatbot` | `java` | Microservicio de Chatbot |
 
 ---
 
@@ -171,23 +144,6 @@ Para cargar un workflow en n8n:
 
 ---
 
-## 👥 Acceso al Repositorio
-
-### 👑 Administradores
-- Líder del proyecto
-- Líder Backend
-- DevOps
-
-### 👨‍💻 Colaboradores
-- Arquitecto de software
-- QA (revisión de flujos)
-
-### ❌ Sin acceso
-- Frontend developers
-- Estudiantes/internos nuevos
-
----
-
 ## 🔗 Endpoints del Backend → n8n
 
 | Endpoint Backend | Webhook n8n | Descripción |
@@ -204,7 +160,7 @@ Para cargar un workflow en n8n:
 | Servicio | URL | Estado |
 |----------|-----|--------|
 | n8n | https://n8n.avaricia.crudzaso.com | ✅ Activo |
-| Wiki.js | http://157.90.251.124:3000 | ✅ Activo |
+| Wiki.js | https://docs.avaricia.crudzaso.com | ✅ Activo |
 | PostgreSQL | 157.90.251.124:5432 | ✅ Activo |
 
 > **Última actualización:** 12 de Diciembre 2025
@@ -213,20 +169,9 @@ Para cargar un workflow en n8n:
 
 ## 📚 Documentación Adicional
 
-- [Arquitectura del Sistema](docs/architecture.md)
 - [Políticas de Seguridad](docs/security-policies.md)
 - [Contratos de Webhook](docs/webhook-contracts.md)
 - [Guía de Instalación](docs/setup-guide.md)
-
----
-
-## 🤝 Contribuir
-
-1. Crear una rama desde `develop`
-2. Implementar el workflow en n8n
-3. Exportar y agregar a `/workflows`
-4. Documentar en el README correspondiente
-5. Crear Pull Request
 
 ---
 
