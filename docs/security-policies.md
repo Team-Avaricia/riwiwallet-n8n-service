@@ -124,11 +124,25 @@ iptables -A INPUT -p tcp --dport 5678 -s BACKEND_IP -j ACCEPT
 iptables -A INPUT -p tcp --dport 5678 -j DROP
 ```
 
+### Ambientes
+
+| Ambiente | URL n8n | Base de datos |
+|----------|---------|---------------|
+| Producción | `https://n8n.avaricia.crudzaso.com` | PostgreSQL prod |
+
+## Monitoreo
+
+### Métricas Clave
+
+- Tiempo de ejecución de workflows
+- Tasa de errores por workflow
+- Webhooks procesados por minuto
+- Latencia de respuesta
+
 ### 3.3 TLS/SSL
 
 | Ambiente | Requisito |
 |----------|-----------|
-| Desarrollo | HTTP permitido (localhost) |
 | Staging | HTTPS obligatorio |
 | Producción | HTTPS + HSTS + TLS 1.3 |
 
