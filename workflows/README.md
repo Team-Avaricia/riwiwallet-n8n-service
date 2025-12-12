@@ -1,15 +1,14 @@
 # 📁 Workflows
 
-Este directorio contiene todos los workflows de n8n exportados y organizados por categoría.
+Este directorio contiene los workflows de n8n exportados y organizados por categoría.
 
 ## Estructura
 
 ```
 workflows/
 ├── email-parsing/          # Flujos de parsing de correos bancarios
-├── user-sync/              # Sincronización de datos de usuario
-├── notifications/          # Alertas y notificaciones
-├── finance-analytics/      # Análisis y proyecciones financieras
+│   ├── bancolombia-nequi-parser.json
+│   └── README.md
 └── README.md               # Este archivo
 ```
 
@@ -24,7 +23,6 @@ Los archivos de workflow siguen esta convención:
 **Ejemplos:**
 - `email-parsing-bancolombia.json`
 - `alert-budget-threshold.json`
-- `sync-user-preferences.json`
 
 ## Cómo Importar Workflows
 
@@ -37,19 +35,10 @@ cd scripts
 
 ### Opción 2: Via UI de n8n
 
-1. Abrir n8n en `http://localhost:5678`
+1. Abrir n8n en `https://n8n.avaricia.crudzaso.com`
 2. Ir a **Workflows** → **Import from File**
 3. Seleccionar el archivo `.json`
 4. Configurar credenciales si es necesario
-
-### Opción 3: Via API
-
-```bash
-curl -X POST "http://localhost:5678/api/v1/workflows" \
-  -H "X-N8N-API-KEY: tu_api_key" \
-  -H "Content-Type: application/json" \
-  -d @workflow.json
-```
 
 ## Cómo Exportar Workflows
 
@@ -75,24 +64,6 @@ Workflows para leer y procesar correos de bancos colombianos:
 - Nequi
 - Davivienda
 - Otros bancos
-
-### 🔄 user-sync/
-Workflows para sincronizar datos:
-- Preferencias de usuario
-- Configuración de presupuestos
-- Reglas de alerta
-
-### 🔔 notifications/
-Workflows de alertas y notificaciones:
-- Alertas de presupuesto
-- Gastos inusuales
-- Resumen diario/semanal
-
-### 📊 finance-analytics/
-Workflows de análisis financiero:
-- Proyecciones
-- Clasificación con IA
-- Reportes
 
 ## Buenas Prácticas
 
@@ -123,27 +94,3 @@ Cada workflow tiene un campo `versionId` automático. Para cambios significativo
 git add workflows/
 git commit -m "feat(workflows): add budget alert threshold logic"
 ```
-
-## Troubleshooting
-
-### El workflow no importa
-
-1. Verificar que el JSON es válido: `jq . workflow.json`
-2. Verificar versión de n8n compatible
-3. Revisar credenciales requeridas
-
-### Credenciales faltantes
-
-Después de importar, configurar credenciales en n8n:
-1. Editar workflow
-2. Click en nodo con error
-3. Seleccionar/crear credencial
-
-### Nodos deprecated
-
-Si n8n muestra warning de nodos obsoletos:
-1. Identificar nodo afectado
-2. Buscar reemplazo en documentación de n8n
-3. Actualizar workflow
-4. Re-exportar
-
