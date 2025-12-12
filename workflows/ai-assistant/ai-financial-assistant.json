@@ -1,0 +1,425 @@
+{
+    "name": "AI Financial Assistant",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "ai-action",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ],
+            "webhookId": "ai-financial-assistant"
+        },
+        {
+            "parameters": {
+                "dataType": "string",
+                "value1": "={{ $json.body.intent }}",
+                "rules": {
+                    "rules": [
+                        {
+                            "value2": "validate_expense",
+                            "output": 0
+                        },
+                        {
+                            "value2": "create_expense",
+                            "output": 1
+                        },
+                        {
+                            "value2": "create_income",
+                            "output": 1
+                        },
+                        {
+                            "value2": "list_transactions",
+                            "output": 2
+                        },
+                        {
+                            "value2": "list_transactions_by_date",
+                            "output": 3
+                        },
+                        {
+                            "value2": "list_transactions_by_range",
+                            "output": 4
+                        },
+                        {
+                            "value2": "search_transactions",
+                            "output": 5
+                        },
+                        {
+                            "value2": "get_balance",
+                            "output": 6
+                        },
+                        {
+                            "value2": "get_summary",
+                            "output": 7
+                        },
+                        {
+                            "value2": "delete_transaction",
+                            "output": 8
+                        },
+                        {
+                            "value2": "create_rule",
+                            "output": 9
+                        },
+                        {
+                            "value2": "list_rules",
+                            "output": 10
+                        }
+                    ]
+                }
+            },
+            "name": "Switch Intent",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://riwi_api:8080/api/SpendingValidation/validate",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "userId",
+                            "value": "={{ $json.body.userId }}"
+                        },
+                        {
+                            "name": "amount",
+                            "value": "={{ $json.body.amount }}"
+                        },
+                        {
+                            "name": "category",
+                            "value": "={{ $json.body.category }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Validate Expense",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://riwi_api:8080/api/Transaction",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "userId",
+                            "value": "={{ $json.body.userId }}"
+                        },
+                        {
+                            "name": "amount",
+                            "value": "={{ $json.body.amount }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "={{ $json.body.type }}"
+                        },
+                        {
+                            "name": "category",
+                            "value": "={{ $json.body.category }}"
+                        },
+                        {
+                            "name": "description",
+                            "value": "={{ $json.body.description }}"
+                        },
+                        {
+                            "name": "source",
+                            "value": "Automatic"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Create Transaction",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                250
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId }}",
+                "options": {},
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "type",
+                            "value": "={{ $json.body.type }}"
+                        }
+                    ]
+                }
+            },
+            "name": "List Transactions",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId + '/date/' + $json.body.startDate }}",
+                "options": {}
+            },
+            "name": "List By Date",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                550
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId + '/range' }}",
+                "options": {},
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "startDate",
+                            "value": "={{ $json.body.startDate }}"
+                        },
+                        {
+                            "name": "endDate",
+                            "value": "={{ $json.body.endDate }}"
+                        }
+                    ]
+                }
+            },
+            "name": "List By Range",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                700
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId + '/search' }}",
+                "options": {},
+                "queryParameters": {
+                    "parameters": [
+                        {
+                            "name": "query",
+                            "value": "={{ $json.body.searchQuery }}"
+                        }
+                    ]
+                }
+            },
+            "name": "Search Transactions",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                850
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ 'http://riwi_api:8080/api/User/' + $json.body.userId + '/balance' }}",
+                "options": {}
+            },
+            "name": "Get Balance",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                1000
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId + '/summary/category' }}",
+                "options": {}
+            },
+            "name": "Get Summary",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                1150
+            ]
+        },
+        {
+            "parameters": {
+                "method": "DELETE",
+                "url": "={{ 'http://riwi_api:8080/api/Transaction/' + $json.body.transactionId }}",
+                "options": {}
+            },
+            "name": "Delete Transaction",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                1300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://riwi_api:8080/api/FinancialRule",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "userId",
+                            "value": "={{ $json.body.userId }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "Budget"
+                        },
+                        {
+                            "name": "category",
+                            "value": "={{ $json.body.category }}"
+                        },
+                        {
+                            "name": "amountLimit",
+                            "value": "={{ $json.body.amount }}"
+                        },
+                        {
+                            "name": "period",
+                            "value": "Monthly"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Create Rule",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                1450
+            ]
+        },
+        {
+            "parameters": {
+                "url": "={{ 'http://riwi_api:8080/api/FinancialRule/user/' + $json.body.userId }}",
+                "options": {}
+            },
+            "name": "List Rules",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                1600
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Switch Intent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Switch Intent": {
+            "main": [
+                [
+                    {
+                        "node": "Validate Expense",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Create Transaction",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "List Transactions",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "List By Date",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "List By Range",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Search Transactions",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Get Balance",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Get Summary",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Delete Transaction",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Create Rule",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "List Rules",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
