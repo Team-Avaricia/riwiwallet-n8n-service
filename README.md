@@ -40,9 +40,9 @@ Este repositorio contiene las **automatizaciones críticas** de RiwiWallet, incl
 
 ---
 
-## 🐳 Contenedores Docker
+## 🐳 Contenedores en Producción
 
-El servicio de n8n se ejecuta junto con Redis para el manejo de colas. Los contenedores activos en el entorno de producción son:
+El servicio de n8n ya se encuentra desplegado y activo. Los contenedores principales son:
 
 | Contenedor | Imagen | Descripción |
 |------------|--------|-------------|
@@ -68,16 +68,6 @@ El servicio de n8n se ejecuta junto con Redis para el manejo de colas. Los conte
 │   ├── finance-analytics/      # Cálculos, reportes y proyecciones IA
 │   └── README.md               # Documentación general de workflows
 │
-├── docker/
-│   ├── Dockerfile              # Imagen personalizada de n8n
-│   ├── docker-compose.yaml     # Ejecutar n8n localmente
-│   ├── nginx.conf              # Proxy reverso con SSL
-│   └── README.md               # Instrucciones de Docker
-│
-├── env/
-│   ├── .env.example            # Variables de entorno (ejemplo)
-│   └── production.env          # Variables de producción (NO subir)
-│
 ├── scripts/
 │   ├── export-workflows.sh     # Exportar workflows desde n8n
 │   ├── import-workflows.sh     # Importar workflows en nuevos entornos
@@ -93,18 +83,9 @@ El servicio de n8n se ejecuta junto con Redis para el manejo de colas. Los conte
 
 ---
 
-## 🚀 Requisitos
+## 🚀 Uso del Repositorio
 
-| Herramienta | Versión Mínima |
-|-------------|----------------|
-| Docker      | 20.10+         |
-| Docker Compose | 2.0+        |
-| Node.js     | 18+            |
-| n8n         | 1.0+           |
-
----
-
-## ⚡ Inicio Rápido
+Este repositorio sirve para **versionar y respaldar** los workflows de n8n.
 
 ### 1. Clonar el repositorio
 
@@ -113,39 +94,32 @@ git clone https://github.com/Team-Avaricia/riwiwallet-n8n-service.git
 cd riwiwallet-n8n-service
 ```
 
-### 2. Configurar variables de entorno
+### 2. Acceder a n8n
 
-```bash
-cp env/.env.example env/.env
-# Editar env/.env con tus credenciales
-```
-
-### 3. Levantar n8n con Docker
-
-```bash
-cd docker
-docker-compose up -d
-```
-
-### 4. Acceder a n8n
-
-Abre tu navegador en: `https://n8n.avaricia.crudzaso.com`
+El servicio está activo en: `https://n8n.avaricia.crudzaso.com`
 
 ---
 
 ## 📥 Importar/Exportar Workflows
 
-### Exportar workflows actuales
+### Exportar workflows (Backup)
+
+Para guardar cambios hechos en n8n:
+1. Exportar el workflow desde la UI de n8n (Download JSON).
+2. Guardar el archivo en la carpeta correspondiente dentro de `workflows/`.
+3. Hacer commit y push.
 
 ```bash
-./scripts/export-workflows.sh
+git add workflows/
+git commit -m "feat: update workflow logic"
+git push
 ```
 
-### Importar workflows al entorno
+### Importar workflows
 
-```bash
-./scripts/import-workflows.sh
-```
+Para cargar un workflow en n8n:
+1. Copiar el contenido del archivo JSON.
+2. En n8n, ir a "Import from File" o pegar directamente en el editor.
 
 ---
 
