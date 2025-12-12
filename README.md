@@ -40,6 +40,20 @@ Este repositorio contiene las **automatizaciones críticas** de RiwiWallet, incl
 
 ---
 
+## 🐳 Contenedores Docker
+
+El servicio de n8n se ejecuta junto con Redis para el manejo de colas. Los contenedores activos en el entorno de producción son:
+
+| Contenedor | Imagen | Descripción |
+|------------|--------|-------------|
+| `riwi_n8n` | `n8nio/n8n:latest` | Motor de workflows principal |
+| `riwi_redis` | `redis:7-alpine` | Cola de mensajes y caché para n8n |
+| `db` | `postgres:16-alpine` | Base de datos principal (compartida) |
+| `netapi_gestor_finanzas` | `dotnet APT.dll` | Backend API de RiwiWallet |
+| `riwiwallet_chatbot` | `java` | Microservicio de Chatbot |
+
+---
+
 ## 📁 Estructura del Repositorio
 
 ```
@@ -47,10 +61,12 @@ Este repositorio contiene las **automatizaciones críticas** de RiwiWallet, incl
 │
 ├── workflows/
 │   ├── email-parsing/          # Flujos para leer y parsear correos bancarios
+│   │   ├── bancolombia-nequi-parser.json
+│   │   └── README.md           # Documentación específica del parser
 │   ├── user-sync/              # Sincronización de datos de usuario
 │   ├── notifications/          # Alertas y mensajes proactivos
 │   ├── finance-analytics/      # Cálculos, reportes y proyecciones IA
-│   └── README.md               # Documentación de workflows
+│   └── README.md               # Documentación general de workflows
 │
 ├── docker/
 │   ├── Dockerfile              # Imagen personalizada de n8n
@@ -113,7 +129,7 @@ docker-compose up -d
 
 ### 4. Acceder a n8n
 
-Abre tu navegador en: `http://localhost:5678`
+Abre tu navegador en: `https://n8n.avaricia.crudzaso.com`
 
 ---
 
@@ -162,6 +178,7 @@ Abre tu navegador en: `http://localhost:5678`
 - Lectura de correos de bancos colombianos
 - Extracción de transacciones (monto, fecha, comercio)
 - Clasificación automática con IA
+- [Ver documentación detallada](workflows/email-parsing/README.md)
 
 ### 2. 🔔 Alertas Proactivas
 - 80% del límite semanal alcanzado
@@ -212,11 +229,11 @@ Abre tu navegador en: `http://localhost:5678`
 
 | Servicio | URL | Estado |
 |----------|-----|--------|
-| n8n | http://157.90.251.124:5678 | ✅ Activo |
+| n8n | https://n8n.avaricia.crudzaso.com | ✅ Activo |
 | Wiki.js | http://157.90.251.124:3000 | ✅ Activo |
 | PostgreSQL | 157.90.251.124:5432 | ✅ Activo |
 
-> **Última actualización:** 6 de Diciembre 2025
+> **Última actualización:** 12 de Diciembre 2025
 
 ---
 
@@ -242,7 +259,3 @@ Abre tu navegador en: `http://localhost:5678`
 ## 📄 Licencia
 
 Este proyecto es privado y pertenece a **Team Avaricia** - RiwiWallet.
-
----
-
-
