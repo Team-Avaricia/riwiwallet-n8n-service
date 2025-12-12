@@ -170,7 +170,6 @@ Para cargar un workflow en n8n:
 
 - [Políticas de Seguridad](docs/security-policies.md)
 - [Contratos de Webhook](docs/webhook-contracts.md)
-- [Guía de Instalación](docs/setup-guide.md)
 
 ---
 
