@@ -84,7 +84,7 @@
         {
             "parameters": {
                 "method": "POST",
-                "url": "http://riwi_api:8080/api/SpendingValidation/validate",
+                "url": "{{ $env.BACKEND_URL || 'http://riwi_api:8080' }}/api/SpendingValidation/validate",
                 "sendBody": true,
                 "bodyParameters": {
                     "parameters": [
@@ -115,7 +115,7 @@
         {
             "parameters": {
                 "method": "POST",
-                "url": "http://riwi_api:8080/api/Transaction",
+                "url": "{{ $env.BACKEND_URL || 'http://riwi_api:8080' }}/api/Transaction",
                 "sendBody": true,
                 "bodyParameters": {
                     "parameters": [
@@ -157,7 +157,7 @@
         },
         {
             "parameters": {
-                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId }}",
+                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/Transaction/user/' + $json.body.userId }}",
                 "options": {},
                 "queryParameters": {
                     "parameters": [
@@ -178,7 +178,7 @@
         },
         {
             "parameters": {
-                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId + '/date/' + $json.body.startDate }}",
+                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/Transaction/user/' + $json.body.userId + '/date/' + $json.body.startDate }}",
                 "options": {}
             },
             "name": "List By Date",
@@ -191,7 +191,7 @@
         },
         {
             "parameters": {
-                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId + '/range' }}",
+                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/Transaction/user/' + $json.body.userId + '/range' }}",
                 "options": {},
                 "queryParameters": {
                     "parameters": [
@@ -216,7 +216,7 @@
         },
         {
             "parameters": {
-                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId + '/search' }}",
+                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/Transaction/user/' + $json.body.userId + '/search' }}",
                 "options": {},
                 "queryParameters": {
                     "parameters": [
@@ -237,7 +237,7 @@
         },
         {
             "parameters": {
-                "url": "={{ 'http://riwi_api:8080/api/User/' + $json.body.userId + '/balance' }}",
+                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/User/' + $json.body.userId + '/balance' }}",
                 "options": {}
             },
             "name": "Get Balance",

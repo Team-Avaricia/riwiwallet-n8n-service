@@ -6,6 +6,13 @@ Este workflow actúa como el motor de ejecución para el Asistente Financiero co
 
 Recibe comandos estructurados en JSON desde un sistema externo (tu IA o Chatbot) y ejecuta las acciones correspondientes en el Backend de RiwiWallet.
 
+## ⚙️ Configuración
+
+Este workflow usa la siguiente variable de entorno para conectar con el Backend:
+
+- `BACKEND_URL`: URL base de la API (ej: `http://riwi_api:8080` o `https://api.midominio.com`).
+- **Valor por defecto:** `http://riwi_api:8080` (Docker interno).
+
 ## 🔗 Webhook Trigger
 
 **Método:** `POST`
