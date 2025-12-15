@@ -84,7 +84,7 @@
         {
             "parameters": {
                 "method": "POST",
-                "url": "{{ $env.BACKEND_URL || 'http://riwi_api:8080' }}/api/SpendingValidation/validate",
+                "url": "{{ $env.BACKEND_URL || 'https://api.avaricia.crudzaso.com' }}/api/SpendingValidation/validate",
                 "sendBody": true,
                 "bodyParameters": {
                     "parameters": [
@@ -115,7 +115,7 @@
         {
             "parameters": {
                 "method": "POST",
-                "url": "{{ $env.BACKEND_URL || 'http://riwi_api:8080' }}/api/Transaction",
+                "url": "{{ $env.BACKEND_URL || 'https://api.avaricia.crudzaso.com' }}/api/Transaction",
                 "sendBody": true,
                 "bodyParameters": {
                     "parameters": [
@@ -157,7 +157,7 @@
         },
         {
             "parameters": {
-                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/Transaction/user/' + $json.body.userId }}",
+                "url": "={{ ($env.BACKEND_URL || 'https://api.avaricia.crudzaso.com') + '/api/Transaction/user/' + $json.body.userId }}",
                 "options": {},
                 "queryParameters": {
                     "parameters": [
@@ -178,7 +178,7 @@
         },
         {
             "parameters": {
-                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/Transaction/user/' + $json.body.userId + '/date/' + $json.body.startDate }}",
+                "url": "={{ ($env.BACKEND_URL || 'https://api.avaricia.crudzaso.com') + '/api/Transaction/user/' + $json.body.userId + '/date/' + $json.body.startDate }}",
                 "options": {}
             },
             "name": "List By Date",
@@ -191,7 +191,7 @@
         },
         {
             "parameters": {
-                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/Transaction/user/' + $json.body.userId + '/range' }}",
+                "url": "={{ ($env.BACKEND_URL || 'https://api.avaricia.crudzaso.com') + '/api/Transaction/user/' + $json.body.userId + '/range' }}",
                 "options": {},
                 "queryParameters": {
                     "parameters": [
@@ -216,7 +216,7 @@
         },
         {
             "parameters": {
-                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/Transaction/user/' + $json.body.userId + '/search' }}",
+                "url": "={{ ($env.BACKEND_URL || 'https://api.avaricia.crudzaso.com') + '/api/Transaction/user/' + $json.body.userId + '/search' }}",
                 "options": {},
                 "queryParameters": {
                     "parameters": [
@@ -237,7 +237,7 @@
         },
         {
             "parameters": {
-                "url": "={{ ($env.BACKEND_URL || 'http://riwi_api:8080') + '/api/User/' + $json.body.userId + '/balance' }}",
+                "url": "={{ ($env.BACKEND_URL || 'https://api.avaricia.crudzaso.com') + '/api/User/' + $json.body.userId + '/balance' }}",
                 "options": {}
             },
             "name": "Get Balance",
@@ -250,7 +250,7 @@
         },
         {
             "parameters": {
-                "url": "={{ 'http://riwi_api:8080/api/Transaction/user/' + $json.body.userId + '/summary/category' }}",
+                "url": "={{ ($env.BACKEND_URL || 'https://api.avaricia.crudzaso.com') + '/api/Transaction/user/' + $json.body.userId + '/summary/category' }}",
                 "options": {}
             },
             "name": "Get Summary",
@@ -264,7 +264,7 @@
         {
             "parameters": {
                 "method": "DELETE",
-                "url": "={{ 'http://riwi_api:8080/api/Transaction/' + $json.body.transactionId }}",
+                "url": "={{ ($env.BACKEND_URL || 'https://api.avaricia.crudzaso.com') + '/api/Transaction/' + $json.body.transactionId }}",
                 "options": {}
             },
             "name": "Delete Transaction",
@@ -278,7 +278,7 @@
         {
             "parameters": {
                 "method": "POST",
-                "url": "http://riwi_api:8080/api/FinancialRule",
+                "url": "{{ $env.BACKEND_URL || 'https://api.avaricia.crudzaso.com' }}/api/FinancialRule",
                 "sendBody": true,
                 "bodyParameters": {
                     "parameters": [
@@ -316,7 +316,7 @@
         },
         {
             "parameters": {
-                "url": "={{ 'http://riwi_api:8080/api/FinancialRule/user/' + $json.body.userId }}",
+                "url": "={{ ($env.BACKEND_URL || 'https://api.avaricia.crudzaso.com') + '/api/FinancialRule/user/' + $json.body.userId }}",
                 "options": {}
             },
             "name": "List Rules",

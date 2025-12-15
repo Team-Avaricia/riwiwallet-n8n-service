@@ -11,7 +11,7 @@ Recibe comandos estructurados en JSON desde un sistema externo (tu IA o Chatbot)
 Este workflow usa la siguiente variable de entorno para conectar con el Backend:
 
 - `BACKEND_URL`: URL base de la API (ej: `http://riwi_api:8080` o `https://api.midominio.com`).
-- **Valor por defecto:** `http://riwi_api:8080` (Docker interno).
+- **Valor por defecto:** `https://api.avaricia.crudzaso.com` (Producción).
 
 ## 🔗 Webhook Trigger
 
